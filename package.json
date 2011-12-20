@@ -1,0 +1,18 @@
+{
+   "name":			"cspmatch",
+   "main":			"./index.js",
+   "version":		"0.0.1",
+   "description":	"中文句型匹配模块",
+   "author": "leizongmin <leizongmin@gmail.com> (http://ucdok.com)",
+   "repository": {
+		"type": "git",
+		"url": "git://github.com/leizongmin/cspmatch.git"
+	},
+	"engines": {
+		"node": ">= 0.4.1"
+	},
+	"dependencies":	{
+		"mustache":			"*",
+		"segment":			"*"
+	}
+}
