@@ -7,12 +7,14 @@ text = '你是谁？';
 //text = '私信我';
 text = '如果明明不';
 text = '他说如果明天下雨怎么';
+//text = '如果明天下雨';
 //text = '100加23';
 //text = '刘德华是谁';
 //text = '发邮件给admin@mail.com';
 //text = '发邮件给张学友';
-text = '发邮件给李小明的妈妈';
+//text = '发邮件给李小明的妈妈';
 //text = '打开http://baidu.com';
+text = '如果明天下雨，发邮件给成龙。';
 
 // 程序模板
 var CODES = [
@@ -64,7 +66,7 @@ sm.match('如果明天刮风？', function (ret) {
 
 //setTimeout(function () { debug('end()'); }, 20000);
 */
-
+/*
 if (ret !== false) {
 	var vm = new VM();
 	vm.run(ret.code, {
@@ -80,3 +82,4 @@ if (ret !== false) {
 				}
 	});
 }
+*/
