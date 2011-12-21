@@ -27,7 +27,7 @@ var CODES = [
 	{s: '如果{今天}晴天', c: '$weather.like($argv[0], "晴天")', t: 'c'},
 	
 	{s: '私信我', c: '$weibo.send("我").exit()', t: 'a'},
-	{s: '发邮件给{刘德华}', c: 'print(\'ok\').exit();', t: 'a'},
+	{s: '发邮件给{刘德华}', c: 'print(\'邮件内容：\' + data).exit();', t: 'a'},
 	{s: '发邮件给{刘德华}的{妈妈}', c: '$.print("亲爱的" + $.argv[0] + $.argv[1] + "，您好！").exit()', t: 'a'},
 	{s: '发邮件给{admin@mail.com}', c: '$email.send($argv[0]).exit()', t: 'a'},
 	{s: '打开{http://site.com}', c: '$browser.open($.argv[0])', t: 'a'},
@@ -94,12 +94,15 @@ var runCodeAsync = function (vm, code, argv, data) {
 var runAll = eval(Jscex.compile('async', function (retarr, callback) {
 	var vm = new VM();
 	var r;
+	var data = '';
 	for (var i in retarr) {
-		r = $await(runCodeAsync(vm, retarr[i].code, retarr[i].arguments, retarr[i].data));
+		r = $await(runCodeAsync(vm, retarr[i].code, retarr[i].arguments, data));
 		if (r.error) {
 			callback(r.error);
 			return;
 		}
+		if (retarr[i].data != '')
+			data = retarr[i].data;
 	}
 	callback(null, r.success);
 }));
