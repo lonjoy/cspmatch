@@ -37,17 +37,21 @@
 						fail: function (err) { console.error('出错：' + err); },
 						timeout: 超时时间（毫秒）,
 						arguments: 参数,
+						sandbox: 自定义沙箱
 						data: 数据
 				});
 		在虚拟机中可使用的函数和数据：
-		$.print('打印内容');
-		$.exit(); 正常结束      $.exit('出错信息'); 异常退出
-		$.argv 参数     $.data 上一个条件语句提供的数据
+		print('打印内容');
+		exit(); 正常结束
+		exit('出错信息'); 异常退出
+		argv 参数
+		data 上一个条件语句提供的数据
 	*/
 	vm.run('$.print($.argv[0] + \'会下雨\').exit();', {
 		done: function (data) { response.sendJSON({success: data}); },
 		fail: function (err) { response.sendError({error: err}); },
 		timeout: 60000,
 		arguments: ['明天'],
+		sandbox: {Jscex: Jscex}
 		data: '明天会下雨'});
 ```

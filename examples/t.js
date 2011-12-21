@@ -1,3 +1,8 @@
+// 初始化Jscex
+var Jscex = require("jscex-jit");
+require("jscex-async").init(Jscex);
+Jscex.log = function () {}
+
 var debug = console.log;
 //var StringMatch = require('./lib/StringMatch');
 var IndexTree = require('../index').Index;
@@ -18,11 +23,11 @@ text = '如果明天下雨，发邮件给成龙。';
 
 // 程序模板
 var CODES = [
-	{s: '如果{今天}下雨', c: '$weather.like($argv[0], "下雨")', t: 'c', d: '{{0}}会下雨'},
+	{s: '如果{今天}下雨', c: 'print(argv[0]).exit()', t: 'c', d: '{{0}}会下雨'},
 	{s: '如果{今天}晴天', c: '$weather.like($argv[0], "晴天")', t: 'c'},
 	
 	{s: '私信我', c: '$weibo.send("我").exit()', t: 'a'},
-	{s: '发邮件给{刘德华}', c: '$email.send($argv[0]).exit()', t: 'a'},
+	{s: '发邮件给{刘德华}', c: 'print(\'ok\').exit();', t: 'a'},
 	{s: '发邮件给{刘德华}的{妈妈}', c: '$.print("亲爱的" + $.argv[0] + $.argv[1] + "，您好！").exit()', t: 'a'},
 	{s: '发邮件给{admin@mail.com}', c: '$email.send($argv[0]).exit()', t: 'a'},
 	{s: '打开{http://site.com}', c: '$browser.open($.argv[0])', t: 'a'},
@@ -66,20 +71,44 @@ sm.match('如果明天刮风？', function (ret) {
 
 //setTimeout(function () { debug('end()'); }, 20000);
 */
-/*
-if (ret !== false) {
-	var vm = new VM();
-	vm.run(ret.code, {
-		arguments:	ret.arguments,
-		data:		ret.data,
-		done:	function (data) {
-					debug('=============================================================================');
-					debug('输出：' + data);
-				},
-		fail:	function (err) {
-					debug('=============================================================================');
-					debug('出错：' + err);
-				}
+
+// 运行代码并返回结果
+var runCodeAsync = function (vm, code, argv, data) {
+	return Jscex.Async.Task.create(function (t) {
+		vm.run(code, {
+			arguments:	argv,
+			data:		data,
+			done: function (data) {
+					t.complete('success', {success: data});
+			},
+			fail: function (err) {
+					t.complete('success', {error: err});
+			},
+			timeout: 2000,
+			sandbox: {Jscex: Jscex}
+		});
 	});
 }
-*/
+
+// 运行所有结果
+var runAll = eval(Jscex.compile('async', function (retarr, callback) {
+	var vm = new VM();
+	var r;
+	for (var i in retarr) {
+		r = $await(runCodeAsync(vm, retarr[i].code, retarr[i].arguments, retarr[i].data));
+		if (r.error) {
+			callback(r.error);
+			return;
+		}
+	}
+	callback(null, r.success);
+}));
+
+runAll(ret, function (error, success) {
+	debug('=============================================================================');
+	if (error)
+		debug('出错：' + error);
+	else
+		debug('成功：' + success);
+}).start();
+debug('=============================================================================');
