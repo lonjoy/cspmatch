@@ -13,6 +13,8 @@
 	},
 	"dependencies":	{
 		"mustache":			"*",
-		"segment":			"*"
+		"segment":			"*",
+    "jscex-jit":    "*",
+    "jscex-async":  "*"
 	}
 }
